@@ -21,10 +21,10 @@ AiFIX is a financial insight app that combines:
 
 
 ## Repo Structure
-- `/frontend` — Lovable exported frontend
-- `/n8n` — docker-compose + exported workflows (n8n uses Supabase PostgreSQL via Postgres node)
-- `/supabase` — schema SQL (tables + vector store)
-- `/sample-data` — sample dataset to test quickly
+- `/n8n/workflows` — exported n8n workflows (JSON)
+- `/supabase` — PostgreSQL schema and vector store definition
+- `/sample-data` — synthetic sample data for testing
+- `/docs/screenshots` — application and workflow screenshots
 
 
 ## Prerequisites
