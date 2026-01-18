@@ -1,0 +1,6 @@
+date,description,category,amount,direction
+2026-01-01,Salary,Income,5000,income
+2026-01-02,Groceries,Food,120,expense
+2026-01-03,Rent,Housing,1500,expense
+2026-01-04,Petrol,Transport,80,expense
+2026-01-05,Freelance Income,Income,800,income
