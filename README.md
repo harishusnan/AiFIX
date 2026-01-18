@@ -21,7 +21,7 @@ AiFIX is a financial insight app that combines:
 
 
 ## Repo Structure
-- `/n8n/workflows` — exported n8n workflows (JSON)
+- `/n8n-workflows` — exported n8n workflows (JSON)
 - `/supabase` — PostgreSQL schema and vector store definition
 - `/sample-data` — synthetic sample data for testing
 - `/docs/screenshots` — application and workflow screenshots
