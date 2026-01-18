@@ -1,0 +1,767 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2822
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 \{\
+  "nodes": [\
+    \{\
+      "parameters": \{\
+        "content": "### Data Vault with Analytics page connection - Workflow",\
+        "height": 912,\
+        "width": 2192,\
+        "color": 4\
+      \},\
+      "type": "n8n-nodes-base.stickyNote",\
+      "typeVersion": 1,\
+      "position": [\
+        -928,\
+        -368\
+      ],\
+      "id": "a34125c9-f7c2-4759-96dc-8977c0dcb8c9",\
+      "name": "Sticky Note"\
+    \},\
+    \{\
+      "parameters": \{\
+        "httpMethod": "POST",\
+        "path": "8579b7c6-8276-4331-bb64-ffec11808fc8",\
+        "options": \{\}\
+      \},\
+      "type": "n8n-nodes-base.webhook",\
+      "typeVersion": 2.1,\
+      "position": [\
+        -832,\
+        -80\
+      ],\
+      "id": "9c01292a-3778-4102-b0d1-11d7e2881562",\
+      "name": "Webhook - Data Vault",\
+      "webhookId": "8579b7c6-8276-4331-bb64-ffec11808fc8"\
+    \},\
+    \{\
+      "parameters": \{\
+        "url": "=https://xbuipapqegfhebzfytqg.supabase.co/storage/v1/object/public/\{\{ $('Webhook - Data Vault').item.json.body.storage_path \}\}",\
+        "options": \{\
+          "response": \{\
+            "response": \{\
+              "responseFormat": "file",\
+              "outputPropertyName": "file"\
+            \}\
+          \}\
+        \}\
+      \},\
+      "type": "n8n-nodes-base.httpRequest",\
+      "typeVersion": 4.3,\
+      "position": [\
+        -464,\
+        -80\
+      ],\
+      "id": "d1596ff1-6ad4-4a1f-b163-5aac11805f31",\
+      "name": "HTTP Request"\
+    \},\
+    \{\
+      "parameters": \{\
+        "binaryPropertyName": "file",\
+        "options": \{\}\
+      \},\
+      "type": "n8n-nodes-base.extractFromFile",\
+      "typeVersion": 1.1,\
+      "position": [\
+        -272,\
+        -288\
+      ],\
+      "id": "03ec2f06-1967-475c-a191-a5096d78206e",\
+      "name": "Extract from File - CSV to JSON"\
+    \},\
+    \{\
+      "parameters": \{\
+        "fieldToSplitOut": "series",\
+        "include": "allOtherFields",\
+        "options": \{\}\
+      \},\
+      "type": "n8n-nodes-base.splitOut",\
+      "typeVersion": 1,\
+      "position": [\
+        752,\
+        -80\
+      ],\
+      "id": "b300c2a0-a2f9-4fc9-9799-70b526f75c18",\
+      "name": "Split Out"\
+    \},\
+    \{\
+      "parameters": \{\
+        "fieldToSplitOut": "breakdown",\
+        "include": "allOtherFields",\
+        "options": \{\}\
+      \},\
+      "type": "n8n-nodes-base.splitOut",\
+      "typeVersion": 1,\
+      "position": [\
+        752,\
+        128\
+      ],\
+      "id": "c59f0e1e-061f-4a0e-8a7f-5ae1047282cd",\
+      "name": "Split Out1"\
+    \},\
+    \{\
+      "parameters": \{\
+        "operation": "upsert",\
+        "schema": \{\
+          "__rl": true,\
+          "mode": "list",\
+          "value": "public"\
+        \},\
+        "table": \{\
+          "__rl": true,\
+          "value": "income_expense_series",\
+          "mode": "list",\
+          "cachedResultName": "income_expense_series"\
+        \},\
+        "columns": \{\
+          "mappingMode": "defineBelow",\
+          "value": \{\
+            "year": "=\{\{ $json.series.year \}\}",\
+            "expenses": "=\{\{ $json.series.expenses \}\}",\
+            "month": "=\{\{ $json.series.month \}\}",\
+            "income": "=\{\{ $json.series.income \}\}",\
+            "updated_at": "=\{\{$now\}\}",\
+            "document_id": "=\{\{ $json.document_id \}\}"\
+          \},\
+          "matchingColumns": [\
+            "document_id",\
+            "year",\
+            "month"\
+          ],\
+          "schema": [\
+            \{\
+              "id": "year",\
+              "displayName": "year",\
+              "required": true,\
+              "defaultMatch": false,\
+              "display": true,\
+              "type": "number",\
+              "canBeUsedToMatch": true,\
+              "removed": false\
+            \},\
+            \{\
+              "id": "month",\
+              "displayName": "month",\
+              "required": true,\
+              "defaultMatch": false,\
+              "display": true,\
+              "type": "number",\
+              "canBeUsedToMatch": true,\
+              "removed": false\
+            \},\
+            \{\
+              "id": "income",\
+              "displayName": "income",\
+              "required": false,\
+              "defaultMatch": false,\
+              "display": true,\
+              "type": "number",\
+              "canBeUsedToMatch": false\
+            \},\
+            \{\
+              "id": "expenses",\
+              "displayName": "expenses",\
+              "required": false,\
+              "defaultMatch": false,\
+              "display": true,\
+              "type": "number",\
+              "canBeUsedToMatch": false\
+            \},\
+            \{\
+              "id": "updated_at",\
+              "displayName": "updated_at",\
+              "required": false,\
+              "defaultMatch": false,\
+              "display": true,\
+              "type": "dateTime",\
+              "canBeUsedToMatch": false\
+            \},\
+            \{\
+              "id": "document_id",\
+              "displayName": "document_id",\
+              "required": false,\
+              "defaultMatch": false,\
+              "display": true,\
+              "type": "string",\
+              "canBeUsedToMatch": true,\
+              "removed": false\
+            \},\
+            \{\
+              "id": "id",\
+              "displayName": "id",\
+              "required": false,\
+              "defaultMatch": true,\
+              "display": true,\
+              "type": "string",\
+              "canBeUsedToMatch": true,\
+              "removed": true\
+            \}\
+          ],\
+          "attemptToConvertTypes": false,\
+          "convertFieldsToString": false\
+        \},\
+        "options": \{\}\
+      \},\
+      "type": "n8n-nodes-base.postgres",\
+      "typeVersion": 2.6,\
+      "position": [\
+        960,\
+        -80\
+      ],\
+      "id": "970caff9-e61b-423d-8503-5607c531ec06",\
+      "name": "Upsert rows in income and expenses series",\
+      "credentials": \{\
+        "postgres": \{\
+          "id": "lHdYbqutVoRl8M8l",\
+          "name": "Postgres account"\
+        \}\
+      \}\
+    \},\
+    \{\
+      "parameters": \{\
+        "operation": "upsert",\
+        "schema": \{\
+          "__rl": true,\
+          "mode": "list",\
+          "value": "public"\
+        \},\
+        "table": \{\
+          "__rl": true,\
+          "value": "expense_breakdown",\
+          "mode": "list",\
+          "cachedResultName": "expense_breakdown"\
+        \},\
+        "columns": \{\
+          "mappingMode": "defineBelow",\
+          "value": \{\
+            "category": "=\{\{ $json.breakdown.category \}\}",\
+            "year": "=\{\{ $json.breakdown.year \}\}",\
+            "total": "=\{\{ $json.breakdown.total \}\}",\
+            "updated_at": "=\{\{ $now \}\}",\
+            "document_id": "=\{\{ $json.document_id \}\}"\
+          \},\
+          "matchingColumns": [\
+            "document_id",\
+            "year",\
+            "category"\
+          ],\
+          "schema": [\
+            \{\
+              "id": "year",\
+              "displayName": "year",\
+              "required": true,\
+              "defaultMatch": false,\
+              "display": true,\
+              "type": "number",\
+              "canBeUsedToMatch": true,\
+              "removed": false\
+            \},\
+            \{\
+              "id": "category",\
+              "displayName": "category",\
+              "required": true,\
+              "defaultMatch": false,\
+              "display": true,\
+              "type": "string",\
+              "canBeUsedToMatch": true,\
+              "removed": false\
+            \},\
+            \{\
+              "id": "total",\
+              "displayName": "total",\
+              "required": false,\
+              "defaultMatch": false,\
+              "display": true,\
+              "type": "number",\
+              "canBeUsedToMatch": false\
+            \},\
+            \{\
+              "id": "updated_at",\
+              "displayName": "updated_at",\
+              "required": false,\
+              "defaultMatch": false,\
+              "display": true,\
+              "type": "dateTime",\
+              "canBeUsedToMatch": false\
+            \},\
+            \{\
+              "id": "document_id",\
+              "displayName": "document_id",\
+              "required": false,\
+              "defaultMatch": false,\
+              "display": true,\
+              "type": "string",\
+              "canBeUsedToMatch": true,\
+              "removed": false\
+            \},\
+            \{\
+              "id": "id",\
+              "displayName": "id",\
+              "required": false,\
+              "defaultMatch": true,\
+              "display": true,\
+              "type": "string",\
+              "canBeUsedToMatch": true,\
+              "removed": true\
+            \}\
+          ],\
+          "attemptToConvertTypes": false,\
+          "convertFieldsToString": false\
+        \},\
+        "options": \{\}\
+      \},\
+      "type": "n8n-nodes-base.postgres",\
+      "typeVersion": 2.6,\
+      "position": [\
+        960,\
+        128\
+      ],\
+      "id": "62cea56b-8cdc-4adc-8951-f0774eae1fd4",\
+      "name": "Upsert rows in expenses breakdown",\
+      "credentials": \{\
+        "postgres": \{\
+          "id": "lHdYbqutVoRl8M8l",\
+          "name": "Postgres account"\
+        \}\
+      \}\
+    \},\
+    \{\
+      "parameters": \{\
+        "operation": "update",\
+        "tableId": "uploaded_documents",\
+        "filters": \{\
+          "conditions": [\
+            \{\
+              "keyName": "id",\
+              "condition": "eq",\
+              "keyValue": "=\{\{$node[\\"Webhook - Data Vault\\"].json.body.document_id\}\}"\
+            \}\
+          ]\
+        \},\
+        "fieldsUi": \{\
+          "fieldValues": [\
+            \{\
+              "fieldId": "status",\
+              "fieldValue": "processed"\
+            \},\
+            \{\
+              "fieldId": "processed_at",\
+              "fieldValue": "=\{\{ $now \}\}"\
+            \}\
+          ]\
+        \}\
+      \},\
+      "type": "n8n-nodes-base.supabase",\
+      "typeVersion": 1,\
+      "position": [\
+        752,\
+        352\
+      ],\
+      "id": "acd94fc4-8b5a-4d6e-978e-bfec90256b88",\
+      "name": "Update a row - Uploaded Documents",\
+      "credentials": \{\
+        "supabaseApi": \{\
+          "id": "Jl3Tko0AFXvzHtZg",\
+          "name": "CAIE Project"\
+        \}\
+      \}\
+    \},\
+    \{\
+      "parameters": \{\
+        "operation": "upsert",\
+        "schema": \{\
+          "__rl": true,\
+          "mode": "list",\
+          "value": "public"\
+        \},\
+        "table": \{\
+          "__rl": true,\
+          "value": "analytics_summary",\
+          "mode": "list",\
+          "cachedResultName": "analytics_summary"\
+        \},\
+        "columns": \{\
+          "mappingMode": "defineBelow",\
+          "value": \{\
+            "year": "=\{\{ $json.summary.year \}\}",\
+            "yearly_income": "=\{\{ $json.summary.yearly_income \}\}",\
+            "yearly_expenses": "=\{\{ $json.summary.yearly_expenses \}\}",\
+            "savings_rate": "=\{\{ $json.summary.savings_rate \}\}",\
+            "debt_total": "=\{\{ $json.summary.debt_total \}\}",\
+            "updated_at": "=\{\{$now\}\}",\
+            "document_id": "=\{\{ $json.document_id \}\}"\
+          \},\
+          "matchingColumns": [\
+            "document_id"\
+          ],\
+          "schema": [\
+            \{\
+              "id": "year",\
+              "displayName": "year",\
+              "required": true,\
+              "defaultMatch": false,\
+              "display": true,\
+              "type": "number",\
+              "canBeUsedToMatch": false,\
+              "removed": false\
+            \},\
+            \{\
+              "id": "yearly_income",\
+              "displayName": "yearly_income",\
+              "required": false,\
+              "defaultMatch": false,\
+              "display": true,\
+              "type": "number",\
+              "canBeUsedToMatch": false\
+            \},\
+            \{\
+              "id": "yearly_expenses",\
+              "displayName": "yearly_expenses",\
+              "required": false,\
+              "defaultMatch": false,\
+              "display": true,\
+              "type": "number",\
+              "canBeUsedToMatch": false\
+            \},\
+            \{\
+              "id": "savings_rate",\
+              "displayName": "savings_rate",\
+              "required": false,\
+              "defaultMatch": false,\
+              "display": true,\
+              "type": "number",\
+              "canBeUsedToMatch": false\
+            \},\
+            \{\
+              "id": "debt_total",\
+              "displayName": "debt_total",\
+              "required": false,\
+              "defaultMatch": false,\
+              "display": true,\
+              "type": "number",\
+              "canBeUsedToMatch": false\
+            \},\
+            \{\
+              "id": "updated_at",\
+              "displayName": "updated_at",\
+              "required": false,\
+              "defaultMatch": false,\
+              "display": true,\
+              "type": "dateTime",\
+              "canBeUsedToMatch": false\
+            \},\
+            \{\
+              "id": "document_id",\
+              "displayName": "document_id",\
+              "required": false,\
+              "defaultMatch": false,\
+              "display": true,\
+              "type": "string",\
+              "canBeUsedToMatch": true,\
+              "removed": false\
+            \},\
+            \{\
+              "id": "id",\
+              "displayName": "id",\
+              "required": false,\
+              "defaultMatch": true,\
+              "display": true,\
+              "type": "string",\
+              "canBeUsedToMatch": true,\
+              "removed": false\
+            \}\
+          ],\
+          "attemptToConvertTypes": false,\
+          "convertFieldsToString": false\
+        \},\
+        "options": \{\}\
+      \},\
+      "type": "n8n-nodes-base.postgres",\
+      "typeVersion": 2.6,\
+      "position": [\
+        752,\
+        -304\
+      ],\
+      "id": "bf11045f-27a3-4fbf-9b59-3ab5660fcd14",\
+      "name": "Upsert rows in analytics_summary",\
+      "credentials": \{\
+        "postgres": \{\
+          "id": "lHdYbqutVoRl8M8l",\
+          "name": "Postgres account"\
+        \}\
+      \}\
+    \},\
+    \{\
+      "parameters": \{\
+        "jsCode": "// Normalizes parsed CSV/XLSX rows into financial_transactions format.\\n// Supports: bank exports, debit/credit, household format (Date, Mode, Category, Subcategory, Note, Amount, Income/Expense, Currency)\\n// Adds a validation gate to prevent junk files from being processed.\\n\\nfunction pick(row, candidates) \{\\n  for (const key of candidates) \{\\n    if (row[key] !== undefined && row[key] !== null && String(row[key]).trim() !== \\"\\") return row[key];\\n  \}\\n  return null;\\n\}\\n\\nfunction toNumber(v) \{\\n  if (v === null || v === undefined) return null;\\n  const s = String(v)\\n    .replace(/[^\\\\d\\\\.\\\\-\\\\(\\\\),]/g, \\"\\")  // remove currency symbols/letters\\n    .replace(/,/g, \\"\\")\\n    .trim();\\n\\n  // Handle (123.45) as -123.45\\n  const paren = s.match(/^\\\\((.*)\\\\)$/);\\n  const cleaned = paren ? `-$\{paren[1]\}` : s;\\n\\n  const n = Number(cleaned);\\n  return Number.isFinite(n) ? n : null;\\n\}\\n\\nfunction toDateISO(v) \{\\n  if (!v) return null;\\n  const s = String(v).trim();\\n\\n  // Handle ISO datetime: YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss\\n  const iso = s.match(/^(\\\\d\{4\})-(\\\\d\{2\})-(\\\\d\{2\})/);\\n  if (iso) return `$\{iso[1]\}-$\{iso[2]\}-$\{iso[3]\}`;\\n\\n  // Handle DD/MM/YYYY or DD/MM/YYYY HH:mm or DD-MM-YYYY ...\\n  const m = s.match(/^(\\\\d\{1,2\})[\\\\/\\\\-](\\\\d\{1,2\})[\\\\/\\\\-](\\\\d\{4\})(?:\\\\s+\\\\d\{1,2\}:\\\\d\{2\}(?::\\\\d\{2\})?)?$/);\\n  if (m) \{\\n    const a = Number(m[1]), b = Number(m[2]), y = Number(m[3]);\\n\\n    // If a > 12 => DD/MM. Else ambiguous; prefer DD/MM for non-US datasets.\\n    const day = a > 12 ? a : a;\\n    const month = a > 12 ? b : b;\\n\\n    const dd = String(day).padStart(2, \\"0\\");\\n    const mm = String(month).padStart(2, \\"0\\");\\n    return `$\{y\}-$\{mm\}-$\{dd\}`;\\n  \}\\n\\n  // Handle MM/DD/YYYY (fallback) if user exports US format.\\n  const us = s.match(/^(\\\\d\{1,2\})[\\\\/\\\\-](\\\\d\{1,2\})[\\\\/\\\\-](\\\\d\{4\})(?:\\\\s+\\\\d\{1,2\}:\\\\d\{2\}(?::\\\\d\{2\})?)?$/);\\n  if (us) \{\\n    const mm = String(Number(us[1])).padStart(2, \\"0\\");\\n    const dd = String(Number(us[2])).padStart(2, \\"0\\");\\n    const yy = us[3];\\n    // This is same regex as above; kept for clarity if you later want a toggle.\\n    return `$\{yy\}-$\{mm\}-$\{dd\}`;\\n  \}\\n\\n  return null;\\n\}\\n\\nfunction normalizeDirection(dirRaw, amount, debit, credit) \{\\n  // Household format: \\"Income\\" / \\"Expense\\"\\n  if (dirRaw) \{\\n    const t = String(dirRaw).toLowerCase();\\n    if (t.includes(\\"income\\")) return \\"income\\";\\n    if (t.includes(\\"expense\\")) return \\"expense\\";\\n    if (t.includes(\\"credit\\") || t.includes(\\"deposit\\")) return \\"income\\";\\n    if (t.includes(\\"debit\\") || t.includes(\\"withdraw\\")) return \\"expense\\";\\n  \}\\n  // If separate columns exist\\n  if (credit !== null && (debit === null || debit === 0)) return \\"income\\";\\n  if (debit !== null && (credit === null || credit === 0)) return \\"expense\\";\\n\\n  // Fallback: sign\\n  if (amount !== null) return amount >= 0 ? \\"income\\" : \\"expense\\";\\n  return \\"unknown\\";\\n\}\\n\\n// ---- document id from webhook ----\\nconst docId = $('Webhook - Data Vault').first().json.body.document_id;\\n\\n// ---- Validation gate ----\\n// We consider it \\"financial-like\\" if we can find an amount column in most rows.\\n// If too many rows have null amount AND no debit/credit, we mark doc as failed by throwing.\\nlet total = items.length;\\nlet parseable = 0;\\n\\nconst normalized = items.map((\{ json \}) => \{\\n  // Date candidates (including household \\"Date\\")\\n  const dateRaw = pick(json, [\\n    \\"date\\", \\"Date\\", \\"txn_date\\", \\"Txn Date\\", \\"transaction_date\\", \\"Transaction Date\\", \\"Posting Date\\"\\n  ]);\\n\\n  // Category candidates (household \\"Category\\")\\n  const catRaw = pick(json, [\\"category\\", \\"Category\\", \\"Type\\", \\"type\\"]);\\n\\n  // Direction candidates (including household \\"Income/Expense\\")\\n  const dirRaw = pick(json, [\\n    \\"direction\\", \\"Direction\\", \\"type\\", \\"Type\\", \\"Income/Expense\\", \\"income/expense\\", \\"DrCr\\", \\"DRCR\\"\\n  ]);\\n\\n  // Amount candidates\\n  let amount = toNumber(pick(json, [\\"amount\\", \\"Amount\\", \\"amt\\", \\"Amt\\", \\"Value\\", \\"value\\"]));\\n  const debit  = toNumber(pick(json, [\\"debit\\", \\"Debit\\", \\"withdrawal\\", \\"Withdrawal\\", \\"Out\\", \\"out\\"]));\\n  const credit = toNumber(pick(json, [\\"credit\\", \\"Credit\\", \\"deposit\\", \\"Deposit\\", \\"In\\", \\"in\\"]));\\n\\n  // Infer amount if missing\\n  if (amount === null) \{\\n    if (credit !== null && (debit === null || debit === 0)) amount = credit;\\n    else if (debit !== null && (credit === null || credit === 0)) amount = -Math.abs(debit);\\n  \}\\n\\n  // If still null, this row is likely not a transaction row.\\n  const hasAnyAmount = amount !== null || debit !== null || credit !== null;\\n  if (hasAnyAmount) parseable++;\\n\\n  const direction = normalizeDirection(dirRaw, amount, debit, credit);\\n\\n  // Description: household has Note/Subcategory/Mode, bank exports have Description/Narration/Merchant\\n  const descRaw = pick(json, [\\"description\\", \\"Description\\", \\"details\\", \\"Details\\", \\"narration\\", \\"Narration\\", \\"merchant\\", \\"Merchant\\"]);\\n  const note = pick(json, [\\"Note\\", \\"note\\"]);\\n  const subcat = pick(json, [\\"Subcategory\\", \\"subcategory\\"]);\\n  const mode = pick(json, [\\"Mode\\", \\"mode\\"]);\\n\\n  const descParts = [];\\n  if (descRaw) descParts.push(String(descRaw));\\n  if (note) descParts.push(String(note));\\n  if (subcat) descParts.push(String(subcat));\\n  if (mode) descParts.push(String(mode));\\n\\n  const description = descParts.length ? descParts.join(\\" | \\") : null;\\n\\n  // Store amount as positive; use direction for sums\\n  const absAmount = amount === null ? null : Math.abs(amount);\\n\\n  return \{\\n    json: \{\\n      document_id: docId,\\n      txn_date: toDateISO(dateRaw),\\n      description,\\n      category: catRaw ? String(catRaw).trim() : null,\\n      amount: absAmount ?? 0,\\n      direction\\n    \}\\n  \};\\n\});\\n\\n// Validation: require at least 60% rows parseable, otherwise treat as non-financial.\\nconst ratio = total > 0 ? parseable / total : 0;\\nif (total > 0 && ratio < 0.6) \{\\n  // Throwing here will fail the workflow; you can catch and mark status=failed if you add an Error Trigger branch.\\n  throw new Error(`File format not recognized as transactions (parseable rows $\{(ratio*100).toFixed(0)\}%). Please upload a transaction export.`);\\n\}\\n\\nreturn normalized;\\n"\
+      \},\
+      "type": "n8n-nodes-base.code",\
+      "typeVersion": 2,\
+      "position": [\
+        -64,\
+        -80\
+      ],\
+      "id": "3401eed3-d070-4591-b676-aea0c059858f",\
+      "name": "Documents Format Normalization"\
+    \},\
+    \{\
+      "parameters": \{\
+        "jsCode": "// Aggregates analytics from normalized transactions.\\n// Assumes amount is positive and direction indicates income/expense.\\n// Improvements: stable year detection, month sorting, safer defaults.\\n\\nfunction getYear(txnDate) \{\\n  if (!txnDate) return null;\\n  const y = Number(String(txnDate).slice(0, 4));\\n  return Number.isFinite(y) ? y : null;\\n\}\\nfunction getMonth(txnDate) \{\\n  if (!txnDate) return null;\\n  const m = Number(String(txnDate).slice(5, 7));\\n  return Number.isFinite(m) ? m : null;\\n\}\\n\\nconst docId = $('Webhook - Data Vault').first().json.body.document_id;\\n\\nlet yearly_income = 0;\\nlet yearly_expenses = 0;\\n\\nconst byMonth = new Map();      // key: `$\{year\}-$\{month\}`\\nconst byCategory = new Map();   // key: `$\{year\}|$\{category\}`\\n\\nlet year = null;\\n\\n// Prefer using the first valid txn_date year, otherwise fallback to current year\\nfor (const item of items) \{\\n  const t = item.json;\\n  const y = getYear(t.txn_date);\\n  if (y) \{ year = y; break; \}\\n\}\\nif (!year) year = new Date().getFullYear();\\n\\nfor (const item of items) \{\\n  const t = item.json;\\n\\n  const y = getYear(t.txn_date) || year;\\n  const m = getMonth(t.txn_date) || 1;\\n\\n  const amt = Number(t.amount || 0);\\n  const dir = String(t.direction || \\"unknown\\").toLowerCase();\\n  const cat = (t.category && String(t.category).trim()) ? String(t.category).trim() : \\"Uncategorized\\";\\n\\n  if (dir === \\"income\\") yearly_income += amt;\\n  if (dir === \\"expense\\") yearly_expenses += amt;\\n\\n  const keyM = `$\{y\}-$\{m\}`;\\n  const curM = byMonth.get(keyM) || \{ year: y, month: m, income: 0, expenses: 0 \};\\n  if (dir === \\"income\\") curM.income += amt;\\n  if (dir === \\"expense\\") curM.expenses += amt;\\n  byMonth.set(keyM, curM);\\n\\n  if (dir === \\"expense\\") \{\\n    const keyC = `$\{y\}|$\{cat\}`;\\n    const curC = byCategory.get(keyC) || \{ year: y, category: cat, total: 0 \};\\n    curC.total += amt;\\n    byCategory.set(keyC, curC);\\n  \}\\n\}\\n\\nconst savings_rate = yearly_income > 0 ? ((yearly_income - yearly_expenses) / yearly_income) : 0;\\n\\nconst nowIso = new Date().toISOString();\\n\\n// Sort months ascending\\nconst series = Array.from(byMonth.values()).sort((a, b) => (a.year - b.year) || (a.month - b.month)).map(x => (\{\\n  year: x.year,\\n  month: x.month,\\n  income: x.income,\\n  expenses: x.expenses,\\n  updated_at: nowIso\\n\}));\\n\\n// Sort categories by total desc (nice for donut)\\nconst breakdown = Array.from(byCategory.values()).sort((a, b) => b.total - a.total).map(x => (\{\\n  year: x.year,\\n  category: x.category,\\n  total: x.total,\\n  updated_at: nowIso\\n\}));\\n\\nreturn [\\n  \{\\n    json: \{\\n      document_id: docId,\\n      year,\\n      summary: \{\\n        year,\\n        yearly_income,\\n        yearly_expenses,\\n        savings_rate,\\n        debt_total: 0,\\n        updated_at: nowIso\\n      \},\\n      series,\\n      breakdown\\n    \}\\n  \}\\n];\\n"\
+      \},\
+      "type": "n8n-nodes-base.code",\
+      "typeVersion": 2,\
+      "position": [\
+        400,\
+        -80\
+      ],\
+      "id": "ba77ec6f-cef4-46a5-a8fa-a11fbcd25a5f",\
+      "name": "Aggregate Analytics Input"\
+    \},\
+    \{\
+      "parameters": \{\
+        "tableId": "financial_transactions",\
+        "fieldsUi": \{\
+          "fieldValues": [\
+            \{\
+              "fieldId": "document_id",\
+              "fieldValue": "=\{\{$json.document_id\}\}"\
+            \},\
+            \{\
+              "fieldId": "txn_date",\
+              "fieldValue": "=\{\{$json.txn_date\}\}"\
+            \},\
+            \{\
+              "fieldId": "description",\
+              "fieldValue": "=\{\{$json.description\}\}"\
+            \},\
+            \{\
+              "fieldId": "category",\
+              "fieldValue": "=\{\{$json.category\}\}"\
+            \},\
+            \{\
+              "fieldId": "amount",\
+              "fieldValue": "=\{\{$json.amount\}\}"\
+            \},\
+            \{\
+              "fieldId": "direction",\
+              "fieldValue": "=\{\{$json.direction\}\}"\
+            \}\
+          ]\
+        \}\
+      \},\
+      "type": "n8n-nodes-base.supabase",\
+      "typeVersion": 1,\
+      "position": [\
+        160,\
+        -288\
+      ],\
+      "id": "9adaab0d-8a58-48ed-adce-f4ab4d5ff909",\
+      "name": "Create a row in Financial Transactions Table",\
+      "credentials": \{\
+        "supabaseApi": \{\
+          "id": "Jl3Tko0AFXvzHtZg",\
+          "name": "CAIE Project"\
+        \}\
+      \}\
+    \},\
+    \{\
+      "parameters": \{\
+        "operation": "update",\
+        "tableId": "uploaded_documents",\
+        "filters": \{\
+          "conditions": [\
+            \{\
+              "keyName": "id",\
+              "condition": "eq",\
+              "keyValue": "=\{\{$json.body.document_id\}\}"\
+            \}\
+          ]\
+        \},\
+        "fieldsUi": \{\
+          "fieldValues": [\
+            \{\
+              "fieldId": "status",\
+              "fieldValue": "analyzing"\
+            \}\
+          ]\
+        \}\
+      \},\
+      "type": "n8n-nodes-base.supabase",\
+      "typeVersion": 1,\
+      "position": [\
+        -656,\
+        -288\
+      ],\
+      "id": "ca665ebc-424e-48e0-bba6-3c4ed3d7a1a4",\
+      "name": "Update a row in Uploaded Documents Table",\
+      "credentials": \{\
+        "supabaseApi": \{\
+          "id": "Jl3Tko0AFXvzHtZg",\
+          "name": "CAIE Project"\
+        \}\
+      \}\
+    \}\
+  ],\
+  "connections": \{\
+    "Webhook - Data Vault": \{\
+      "main": [\
+        [\
+          \{\
+            "node": "Update a row in Uploaded Documents Table",\
+            "type": "main",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "HTTP Request": \{\
+      "main": [\
+        [\
+          \{\
+            "node": "Extract from File - CSV to JSON",\
+            "type": "main",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "Extract from File - CSV to JSON": \{\
+      "main": [\
+        [\
+          \{\
+            "node": "Documents Format Normalization",\
+            "type": "main",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "Split Out": \{\
+      "main": [\
+        [\
+          \{\
+            "node": "Upsert rows in income and expenses series",\
+            "type": "main",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "Split Out1": \{\
+      "main": [\
+        [\
+          \{\
+            "node": "Upsert rows in expenses breakdown",\
+            "type": "main",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "Upsert rows in analytics_summary": \{\
+      "main": [\
+        []\
+      ]\
+    \},\
+    "Documents Format Normalization": \{\
+      "main": [\
+        [\
+          \{\
+            "node": "Create a row in Financial Transactions Table",\
+            "type": "main",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "Aggregate Analytics Input": \{\
+      "main": [\
+        [\
+          \{\
+            "node": "Split Out",\
+            "type": "main",\
+            "index": 0\
+          \},\
+          \{\
+            "node": "Upsert rows in analytics_summary",\
+            "type": "main",\
+            "index": 0\
+          \},\
+          \{\
+            "node": "Split Out1",\
+            "type": "main",\
+            "index": 0\
+          \},\
+          \{\
+            "node": "Update a row - Uploaded Documents",\
+            "type": "main",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "Create a row in Financial Transactions Table": \{\
+      "main": [\
+        [\
+          \{\
+            "node": "Aggregate Analytics Input",\
+            "type": "main",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "Update a row in Uploaded Documents Table": \{\
+      "main": [\
+        [\
+          \{\
+            "node": "HTTP Request",\
+            "type": "main",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \}\
+  \},\
+  "pinData": \{\
+    "Webhook - Data Vault": [\
+      \{\
+        "headers": \{\
+          "host": "localhost:5678",\
+          "connection": "keep-alive",\
+          "content-length": "145",\
+          "sec-ch-ua-platform": "\\"macOS\\"",\
+          "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",\
+          "sec-ch-ua": "\\"Chromium\\";v=\\"140\\", \\"Not=A?Brand\\";v=\\"24\\", \\"Google Chrome\\";v=\\"140\\"",\
+          "content-type": "application/json",\
+          "sec-ch-ua-mobile": "?0",\
+          "accept": "*/*",\
+          "origin": "https://id-preview--e7b73448-60e0-436c-bb77-c561bb9ad523.lovable.app",\
+          "sec-fetch-site": "cross-site",\
+          "sec-fetch-mode": "cors",\
+          "sec-fetch-dest": "empty",\
+          "accept-encoding": "gzip, deflate, br, zstd",\
+          "accept-language": "en-US,en;q=0.9"\
+        \},\
+        "params": \{\},\
+        "query": \{\},\
+        "body": \{\
+          "document_id": "095d6887-378f-4a67-bb2d-efb575e36b5b",\
+          "storage_path": "financial-docs/1768575746507_Bank_statement_example.pdf",\
+          "file_type": "PDF"\
+        \},\
+        "webhookUrl": "http://localhost:5678/webhook/8579b7c6-8276-4331-bb64-ffec11808fc8",\
+        "executionMode": "production"\
+      \}\
+    ]\
+  \},\
+  "meta": \{\
+    "templateCredsSetupCompleted": true,\
+    "instanceId": "32b991bc33ec68a97b428215184ef01ed63df912c4dc229fb536f0f6cff258b4"\
+  \}\
+\}}

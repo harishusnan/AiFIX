@@ -1,0 +1,261 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2822
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 \{\
+  "nodes": [\
+    \{\
+      "parameters": \{\
+        "content": "### Savings Tracker - Workflow",\
+        "height": 528,\
+        "width": 1408\
+      \},\
+      "type": "n8n-nodes-base.stickyNote",\
+      "typeVersion": 1,\
+      "position": [\
+        -928,\
+        -1456\
+      ],\
+      "id": "ee5874d1-2212-4d7a-8a24-ff56b9778664",\
+      "name": "Sticky Note3"\
+    \},\
+    \{\
+      "parameters": \{\
+        "assignments": \{\
+          "assignments": [\
+            \{\
+              "id": "6cc8dab3-8d37-4f6c-8ec5-d1845984086b",\
+              "name": "insight",\
+              "value": "=\{\{ $items(\\"Ollama Model\\")[0].json.content \}\}",\
+              "type": "string"\
+            \},\
+            \{\
+              "id": "6f0db61c-16db-44f6-8630-7e8e639dddc7",\
+              "name": "score",\
+              "value": "=\{\{ $json.score \}\}",\
+              "type": "number"\
+            \},\
+            \{\
+              "id": "cc8a81eb-d0ea-4911-a00d-808a03022311",\
+              "name": "risk",\
+              "value": "=\{\{ $json.risk \}\}",\
+              "type": "string"\
+            \},\
+            \{\
+              "id": "28b53f0c-6b65-4917-9cc2-dde297fada35",\
+              "name": "monthsToGoal",\
+              "value": "=\{\{ $json.monthsToGoal \}\}",\
+              "type": "number"\
+            \},\
+            \{\
+              "id": "ffa9df1e-f767-4388-80ec-fd0e530261be",\
+              "name": "requiredMonthly",\
+              "value": "=\{\{ $json.requiredMonthly \}\}",\
+              "type": "number"\
+            \},\
+            \{\
+              "id": "afa02761-c5a3-4460-aa90-a1092e2daef2",\
+              "name": "plannedMonthly",\
+              "value": "=\{\{ $json.plannedMonthly \}\}",\
+              "type": "number"\
+            \},\
+            \{\
+              "id": "2cace7ac-454c-4bc7-88b2-7402722ba24c",\
+              "name": "coverageRatio",\
+              "value": "=\{\{ $json.coverageRatio \}\}",\
+              "type": "number"\
+            \},\
+            \{\
+              "id": "fb8e35b3-be87-4671-8ca9-9e6c8151cf5b",\
+              "name": "buffer",\
+              "value": "=\{\{ $json.buffer \}\}",\
+              "type": "number"\
+            \},\
+            \{\
+              "id": "cc4d9ac6-467c-4d73-8f73-505188594405",\
+              "name": "gapMonthly",\
+              "value": "=\{\{ $json.gapMonthly \}\}",\
+              "type": "number"\
+            \},\
+            \{\
+              "id": "aff1ce75-96a3-46fd-9940-6cac6be00003",\
+              "name": "pctIncrease",\
+              "value": "=\{\{ $json.pctIncrease \}\}",\
+              "type": "number"\
+            \}\
+          ]\
+        \},\
+        "options": \{\}\
+      \},\
+      "type": "n8n-nodes-base.set",\
+      "typeVersion": 3.4,\
+      "position": [\
+        48,\
+        -1280\
+      ],\
+      "id": "0f86f8e9-9736-4b15-8590-49c88db215b3",\
+      "name": "Edit Fields"\
+    \},\
+    \{\
+      "parameters": \{\},\
+      "type": "n8n-nodes-base.merge",\
+      "typeVersion": 3.2,\
+      "position": [\
+        -144,\
+        -1280\
+      ],\
+      "id": "d8c8d465-245b-4032-8ac1-fa70f27c3388",\
+      "name": "Merge"\
+    \},\
+    \{\
+      "parameters": \{\
+        "httpMethod": "POST",\
+        "path": "b19b51c9-aa23-4edb-a035-e74b63dd171f",\
+        "responseMode": "responseNode",\
+        "options": \{\}\
+      \},\
+      "type": "n8n-nodes-base.webhook",\
+      "typeVersion": 2.1,\
+      "position": [\
+        -832,\
+        -1296\
+      ],\
+      "id": "6585566c-c5ad-409f-ab69-b2ceaa6d2039",\
+      "name": "Webhook - Savings Tracker",\
+      "webhookId": "b19b51c9-aa23-4edb-a035-e74b63dd171f"\
+    \},\
+    \{\
+      "parameters": \{\
+        "language": "python",\
+        "pythonCode": "import math\\nimport numpy as np\\nfrom datetime import date\\nfrom sklearn.linear_model import LogisticRegression\\n\\n# -----------------------------\\n# 1) Read inputs\\n# -----------------------------\\ngoal_title = _input.first().json.body.goalTitle\\ntarget_amount = float(_input.first().json.body.targetAmount)\\ntarget_month = int(_input.first().json.body.targetMonth)\\ntarget_year = int(_input.first().json.body.targetYear)\\n\\n# Normalize month to 1..12 for Python date()\\nif 0 <= target_month <= 11:\\n    target_month += 1\\ntarget_month = min(12, max(1, target_month))\\n\\nmonthly_savings = float(_input.first().json.body.monthlySavings)\\nextra_budget = float(_input.first().json.body.extraBudget)\\n\\n# -----------------------------\\n# 2) Feature engineering (real inputs)\\n# -----------------------------\\ntoday = date.today()\\ntarget_date = date(target_year, target_month, 1)\\n\\nmonths_to_goal = max(1, (target_date.year - today.year) * 12 + (target_date.month - today.month))\\nplanned_monthly = monthly_savings + extra_budget\\nrequired_monthly = target_amount / months_to_goal if months_to_goal > 0 else target_amount\\ncoverage_ratio = planned_monthly / required_monthly if required_monthly > 0 else 0.0\\nbuffer = planned_monthly - required_monthly\\n\\n# We\'92ll train on these features:\\n# X = [coverage_ratio_clamped, log(1+months_to_goal), required_over_planned, buffer_scaled]\\ncoverage_ratio_clamped = min(max(coverage_ratio, 0.0), 2.0)\\nlog_months = math.log(1 + months_to_goal)\\nrequired_over_planned = required_monthly / max(planned_monthly, 1.0)\\nbuffer_scaled = max(-10.0, min(10.0, buffer / 1000.0))\\n\\nX_real = np.array([[coverage_ratio_clamped, log_months, required_over_planned, buffer_scaled]], dtype=float)\\n\\n# -----------------------------\\n# 3) Create a small synthetic training set (fast + stable)\\n# -----------------------------\\n# This makes sklearn truly \\"trained\\" (supervised), without needing user accounts.\\nrng = np.random.default_rng(42)\\nn = 1200\\n\\ncov = rng.uniform(0.0, 2.0, size=n)                           # coverage ratio 0..2\\nmths = rng.integers(1, 361, size=n)                           # 1..360 months\\nlogm = np.log1p(mths)\\nreq_over_plan = rng.uniform(0.2, 5.0, size=n)                 # pressure 0.2..5\\nbuf = rng.uniform(-10.0, 10.0, size=n)                        # -10..10 (buffer/1000)\\n\\nX = np.column_stack([cov, logm, req_over_plan, buf]).astype(float)\\n\\n# Define \\"success\\" labels using a sensible rule + noise\\n# Higher coverage + more months + positive buffer = higher chance\\nz = (\\n    -1.6\\n    + 2.2 * cov\\n    + 0.35 * logm\\n    - 1.3 * np.log1p(req_over_plan)\\n    + 0.12 * buf\\n)\\np = 1 / (1 + np.exp(-z))\\n# sample labels\\ny = (rng.uniform(0, 1, size=n) < p).astype(int)\\n\\n# -----------------------------\\n# 4) Train Logistic Regression\\n# -----------------------------\\nmodel = LogisticRegression(solver=\\"lbfgs\\", max_iter=500)\\nmodel.fit(X, y)\\n\\n# -----------------------------\\n# 5) Predict probability for real user input\\n# -----------------------------\\nprob_success = float(model.predict_proba(X_real)[0, 1])\\nscore = int(round(prob_success * 100))\\n\\nif score >= 70:\\n    risk = \\"Green\\"\\nelif score >= 40:\\n    risk = \\"Amber\\"\\nelse:\\n    risk = \\"Red\\"\\n\\n# Helpful \'93next step\'94 calc for UI / LLM\\ngap_monthly = max(0.0, required_monthly - planned_monthly)\\npct_increase = (gap_monthly / max(planned_monthly, 1.0)) * 100.0\\n\\nreturn \{\\n    \\"goalTitle\\": goal_title,\\n    \\"targetAmount\\": round(target_amount),\\n    \\"targetMonth\\": target_month,\\n    \\"targetYear\\": target_year,\\n    \\"monthsToGoal\\": int(months_to_goal),\\n    \\"monthlySavings\\": round(monthly_savings),\\n    \\"extraBudget\\": round(extra_budget),\\n    \\"requiredMonthly\\": round(required_monthly),\\n    \\"plannedMonthly\\": round(planned_monthly),\\n    \\"coverageRatio\\": round(coverage_ratio, 3),\\n    \\"buffer\\": round(buffer),\\n    \\"probability\\": round(prob_success, 2),\\n    \\"score\\": score,\\n    \\"risk\\": risk,\\n    \\"gapMonthly\\": round(gap_monthly),\\n    \\"pctIncrease\\": round(pct_increase, 0)\\n\}\\n"\
+      \},\
+      "type": "n8n-nodes-base.code",\
+      "typeVersion": 2,\
+      "position": [\
+        -640,\
+        -1296\
+      ],\
+      "id": "adc90a73-8073-4e6e-88d7-aa63b625af15",\
+      "name": "LR Model"\
+    \},\
+    \{\
+      "parameters": \{\
+        "modelId": \{\
+          "__rl": true,\
+          "value": "llama3.1:latest",\
+          "mode": "list",\
+          "cachedResultName": "llama3.1:latest"\
+        \},\
+        "messages": \{\
+          "values": [\
+            \{\
+              "content": "=Goal Title: \{\{$json.goalTitle\}\}\\nTarget Amount (RM): \{\{$json.targetAmount\}\}\\nTarget Timeline: \{\{$json.targetMonth\}\}/\{\{$json.targetYear\}\} (\{\{$json.monthsToGoal\}\} months)\\n\\nRequired Monthly (RM): \{\{$json.requiredMonthly\}\}\\nPlanned Monthly (RM): \{\{$json.plannedMonthly\}\}\\nCoverage Ratio: \{\{$json.coverageRatio\}\}\\nMonthly Buffer (RM): \{\{$json.buffer\}\}\\n\\nSuccess Probability: \{\{$json.score\}\}%\\nRisk Level: \{\{$json.risk\}\}\\n\\nGap to hit date (RM/month): \{\{$json.gapMonthly\}\}\\nNeeded increase (%): \{\{$json.pctIncrease\}\}\\n\\nGenerate insight bullets and the single best next step.\\n"\
+            \}\
+          ]\
+        \},\
+        "options": \{\
+          "system": "You are AiFIX, a practical financial planning assistant.\\n\\nRules:\\n- Output plain text only\\n- Max 4 bullet points\\n- Each bullet starts with \'93\'95 \'94\\n- No headings, no markdown, no JSON\\n- Use RM currency\\n- Include exactly ONE primary action recommendation:\\n  \'93Increase monthly savings by RM X (Y%) to reach Green\'94\\n  OR \'93Extend the timeline by N months\'94\\n- Keep tone modern, fintech, concise"\
+        \}\
+      \},\
+      "type": "@n8n/n8n-nodes-langchain.ollama",\
+      "typeVersion": 1,\
+      "position": [\
+        -432,\
+        -1200\
+      ],\
+      "id": "37ba0578-30d9-49c8-bfbb-7a854264adf6",\
+      "name": "Ollama Model",\
+      "credentials": \{\
+        "ollamaApi": \{\
+          "id": "SBJS5W8EkmiBcayu",\
+          "name": "Ollama account"\
+        \}\
+      \}\
+    \},\
+    \{\
+      "parameters": \{\
+        "respondWith": "json",\
+        "responseBody": "=\{\{ $json \}\}",\
+        "options": \{\}\
+      \},\
+      "type": "n8n-nodes-base.respondToWebhook",\
+      "typeVersion": 1.4,\
+      "position": [\
+        240,\
+        -1280\
+      ],\
+      "id": "c8212c54-c435-401f-a9d6-20b0a02b46ef",\
+      "name": "Respond to Webhook - ST"\
+    \}\
+  ],\
+  "connections": \{\
+    "Edit Fields": \{\
+      "main": [\
+        [\
+          \{\
+            "node": "Respond to Webhook - ST",\
+            "type": "main",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "Merge": \{\
+      "main": [\
+        [\
+          \{\
+            "node": "Edit Fields",\
+            "type": "main",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "Webhook - Savings Tracker": \{\
+      "main": [\
+        [\
+          \{\
+            "node": "LR Model",\
+            "type": "main",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "LR Model": \{\
+      "main": [\
+        [\
+          \{\
+            "node": "Ollama Model",\
+            "type": "main",\
+            "index": 0\
+          \},\
+          \{\
+            "node": "Merge",\
+            "type": "main",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "Ollama Model": \{\
+      "main": [\
+        [\
+          \{\
+            "node": "Merge",\
+            "type": "main",\
+            "index": 1\
+          \}\
+        ]\
+      ]\
+    \}\
+  \},\
+  "pinData": \{\},\
+  "meta": \{\
+    "templateCredsSetupCompleted": true,\
+    "instanceId": "32b991bc33ec68a97b428215184ef01ed63df912c4dc229fb536f0f6cff258b4"\
+  \}\
+\}}

@@ -1,0 +1,499 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2822
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 \{\
+  "nodes": [\
+    \{\
+      "parameters": \{\
+        "jsonMode": "expressionData",\
+        "jsonData": "=\{\{ $json.text \}\}",\
+        "textSplittingMode": "custom",\
+        "options": \{\
+          "metadata": \{\
+            "metadataValues": [\
+              \{\
+                "name": "=document_title",\
+                "value": "=\{\{$json.info.Title.replace(/\\\\.[^/.]+$/,\\"\\") || \\"unknown.pdf\\"\}\}"\
+              \},\
+              \{\
+                "name": "document_id",\
+                "value": "=\{\{$json.info.Title.replace(/\\\\.[^/.]+$/,\\"\\") || \\"unknown.pdf\\"\}\}"\
+              \},\
+              \{\
+                "name": "source",\
+                "value": "user_upload"\
+              \}\
+            ]\
+          \}\
+        \}\
+      \},\
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",\
+      "typeVersion": 1.1,\
+      "position": [\
+        496,\
+        -672\
+      ],\
+      "id": "bd2132fa-ef06-4450-ab9c-7bcc96d9a9a2",\
+      "name": "Default Data Loader"\
+    \},\
+    \{\
+      "parameters": \{\
+        "content": "### Upload References in Knowledge Base - Workflow",\
+        "height": 528,\
+        "width": 2272,\
+        "color": 6\
+      \},\
+      "type": "n8n-nodes-base.stickyNote",\
+      "typeVersion": 1,\
+      "position": [\
+        -928,\
+        -912\
+      ],\
+      "id": "3696cafc-eac2-4e96-864a-24f961f85f77",\
+      "name": "Sticky Note2"\
+    \},\
+    \{\
+      "parameters": \{\
+        "operation": "pdf",\
+        "binaryPropertyName": "=\{\{ Object.keys($binary)[0] \}\}",\
+        "options": \{\}\
+      \},\
+      "type": "n8n-nodes-base.extractFromFile",\
+      "typeVersion": 1.1,\
+      "position": [\
+        16,\
+        -832\
+      ],\
+      "id": "378cc7d1-c927-41ec-99c3-184464e18dd1",\
+      "name": "Extract from File"\
+    \},\
+    \{\
+      "parameters": \{\
+        "httpMethod": "POST",\
+        "path": "106ba888-2561-4415-b6bf-94bdb4490ca4",\
+        "responseMode": "responseNode",\
+        "options": \{\
+          "binaryPropertyName": "file"\
+        \}\
+      \},\
+      "type": "n8n-nodes-base.webhook",\
+      "typeVersion": 2.1,\
+      "position": [\
+        -864,\
+        -672\
+      ],\
+      "id": "8e7e1f78-9790-48f6-9c44-b81c06129d9f",\
+      "name": "Webhook - Knowledge Base",\
+      "webhookId": "106ba888-2561-4415-b6bf-94bdb4490ca4"\
+    \},\
+    \{\
+      "parameters": \{\
+        "separator": ".",\
+        "chunkSize": 800,\
+        "chunkOverlap": 150\
+      \},\
+      "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter",\
+      "typeVersion": 1,\
+      "position": [\
+        496,\
+        -528\
+      ],\
+      "id": "94ebdc33-2683-43a4-b3db-7a23ddd02a8b",\
+      "name": "Character Text Splitter"\
+    \},\
+    \{\
+      "parameters": \{\
+        "mode": "insert",\
+        "tableName": \{\
+          "__rl": true,\
+          "mode": "list",\
+          "value": "documents"\
+        \},\
+        "options": \{\
+          "queryName": "match_documents"\
+        \}\
+      \},\
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",\
+      "typeVersion": 1.3,\
+      "position": [\
+        336,\
+        -832\
+      ],\
+      "id": "01c7c964-1364-4864-8078-6a8c66693ec4",\
+      "name": "Supabase Vector Store - KB",\
+      "credentials": \{\
+        "supabaseApi": \{\
+          "id": "Jl3Tko0AFXvzHtZg",\
+          "name": "CAIE Project"\
+        \}\
+      \}\
+    \},\
+    \{\
+      "parameters": \{\
+        "respondWith": "json",\
+        "responseBody": "\{\\n  \\"status\\": \\"success\\",\\n  \\"message\\": \\"Reference uploaded and indexed successfully\\",\\n  \\"document\\": \{\\n    \\"id\\": \\"uuid\\",\\n    \\"title\\": \\"file.pdf\\",\\n\\n    \\"document_id\\": \\"Book Summary_Rich Dad\\",\\n    \\"document_title\\": \\"Book Summary_Rich Dad\\",\\n\\n    \\"created_at\\": \\"2026-01-14T08:00:00Z\\",\\n    \\"status\\": \\"indexed\\",\\n    \\"chunk_count\\": 42\\n  \},\\n  \\"totals\\": \{\\n    \\"totalDocs\\": 7,\\n    \\"totalChunks\\": 210\\n  \}\\n\}\\n",\
+        "options": \{\
+          "responseCode": 200\
+        \}\
+      \},\
+      "type": "n8n-nodes-base.respondToWebhook",\
+      "typeVersion": 1.4,\
+      "position": [\
+        1104,\
+        -832\
+      ],\
+      "id": "59a9bc3f-2dcf-4fc1-a0c1-c177252ba9d5",\
+      "name": "Respond to Webhook - KB"\
+    \},\
+    \{\
+      "parameters": \{\
+        "model": "llama3.1:latest"\
+      \},\
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",\
+      "typeVersion": 1,\
+      "position": [\
+        320,\
+        -624\
+      ],\
+      "id": "7f3ee63a-ee4c-408f-b883-8d477eee0724",\
+      "name": "Embeddings Ollama - KB",\
+      "credentials": \{\
+        "ollamaApi": \{\
+          "id": "SBJS5W8EkmiBcayu",\
+          "name": "Ollama account"\
+        \}\
+      \}\
+    \},\
+    \{\
+      "parameters": \{\
+        "tableId": "kb_documents",\
+        "fieldsUi": \{\
+          "fieldValues": [\
+            \{\
+              "fieldId": "session_id",\
+              "fieldValue": "=\{\{ $json.session_id \}\}"\
+            \},\
+            \{\
+              "fieldId": "title",\
+              "fieldValue": "=\{\{ $json.title \}\}"\
+            \},\
+            \{\
+              "fieldId": "status",\
+              "fieldValue": "=\{\{ $json.status \}\}"\
+            \},\
+            \{\
+              "fieldId": "chunk_count",\
+              "fieldValue": "=\{\{ $json.chunk_count \}\}"\
+            \},\
+            \{\
+              "fieldId": "created_at",\
+              "fieldValue": "=\{\{ $json.created_at \}\}"\
+            \}\
+          ]\
+        \}\
+      \},\
+      "type": "n8n-nodes-base.supabase",\
+      "typeVersion": 1,\
+      "position": [\
+        880,\
+        -832\
+      ],\
+      "id": "48ef4e6e-22aa-4b75-ba58-db4051af9464",\
+      "name": "Create a row in KB Documents Table",\
+      "credentials": \{\
+        "supabaseApi": \{\
+          "id": "Jl3Tko0AFXvzHtZg",\
+          "name": "CAIE Project"\
+        \}\
+      \}\
+    \},\
+    \{\
+      "parameters": \{\
+        "jsCode": "// items = chunks coming from Supabase Vector Store node\\nconst chunk_count = items.length;\\n\\n// Try to pick a title from metadata (if available)\\nconst first = items[0]?.json ?? \{\};\\nconst title =\\n  first.document_title ||\\n  first.title ||\\n  first.metadata?.document_title ||\\n  first.metadata?.title ||\\n  first.metadata?.filename ||\\n  \\"Untitled document\\";\\n\\n// session_id should come from webhook/extract nodes. Try common locations:\\nconst session_id =\\n  first.session_id ||\\n  first.metadata?.session_id ||\\n  $json.session_id || // if available in current context\\n  \\"\\";\\n\\n// Return ONE item only (this is important)\\nreturn [\\n  \{\\n    json: \{\\n      title,\\n      session_id,\\n      chunk_count,\\n      status: \\"indexed\\",\\n      created_at: new Date().toISOString(),\\n    \},\\n  \},\\n];\\n"\
+      \},\
+      "type": "n8n-nodes-base.code",\
+      "typeVersion": 2,\
+      "position": [\
+        672,\
+        -832\
+      ],\
+      "id": "5751f40c-4b01-437e-98f4-c1ac2662d259",\
+      "name": "Metadata Extraction"\
+    \},\
+    \{\
+      "parameters": \{\
+        "jsCode": "// Assumptions:\\n// - Your webhook provides either extracted text OR raw content metadata.\\n// - If you already extract text later, you can move this check to right after extraction.\\n// - This version supports checking file size + rough token estimate from extracted text when available.\\n\\nconst item = $input.item;\\n\\nconst MAX_BYTES = 5 * 1024 * 1024; // 5MB\\nconst MAX_TOKENS = 50000;          // safe ceiling\\nconst MAX_PAGES = 100;             // for PDFs if page count exists\\n\\n// Read from JSON first (sent from Lovable), fallback to binary metadata if present\\nconst binObj = item.binary || $binary || \{\};\\nconst binKey = Object.keys(binObj).length ? Object.keys(binObj)[0] : null;\\nconst bin = binKey ? binObj[binKey] : null;\\n\\nconst fileSize =\\n  $json.file_size ||\\n  $json.fileSize ||\\n  $json.size ||\\n  (bin && bin.fileSize) ||\\n  null;\\n\\nconst mimeType =\\n  $json.mime_type ||\\n  $json.mimeType ||\\n  $json.mimetype ||\\n  $json.type ||\\n  (bin && bin.mimeType) ||\\n  null;\\n\\nconst pages =\\n  $json.page_count ||\\n  $json.pages ||\\n  $json.pageCount ||\\n  null;\\n\\n// If text already exists at this stage:\\nconst text = $json.text || $json.extractedText || \\"\\";\\n\\n// Rough token estimate: ~1 token per 4 chars (common heuristic)\\nconst approxTokens = text ? Math.ceil(text.length / 4) : null;\\n\\nlet reasons = [];\\n\\n// Hard checks\\nif (fileSize != null && fileSize > MAX_BYTES) \{\\n  reasons.push(\\"File size exceeds 5MB\\");\\n\}\\n\\nif (mimeType && mimeType.indexOf(\\"pdf\\") !== -1 && pages != null && pages > MAX_PAGES) \{\\n  reasons.push(\\"PDF exceeds 100 pages\\");\\n\}\\n\\n// If we have text already, also protect from huge extracted content\\nif (approxTokens != null && approxTokens > MAX_TOKENS) \{\\n  reasons.push(\\"Content is too long to index safely (estimated tokens > 50k)\\");\\n\}\\n\\nconst allowed = reasons.length === 0;\\n\\n// IMPORTANT: preserve binary so Extract-from-File can still access the uploaded PDF\\nreturn [\{\\n  json: \{\\n    allowed: allowed,\\n    reasons: reasons,\\n    limits: \{ MAX_BYTES: MAX_BYTES, MAX_TOKENS: MAX_TOKENS, MAX_PAGES: MAX_PAGES \},\\n    detected: \{ fileSize: fileSize, mimeType: mimeType, pages: pages, approxTokens: approxTokens \},\\n    detectedBinaryKey: binKey\\n  \},\\n  binary: item.binary\\n\}];\\n"\
+      \},\
+      "type": "n8n-nodes-base.code",\
+      "typeVersion": 2,\
+      "position": [\
+        -624,\
+        -800\
+      ],\
+      "id": "7a6d4bdd-e205-4ea6-8f93-70de111aa37b",\
+      "name": "Validate Document Limit"\
+    \},\
+    \{\
+      "parameters": \{\
+        "conditions": \{\
+          "options": \{\
+            "caseSensitive": true,\
+            "leftValue": "",\
+            "typeValidation": "strict",\
+            "version": 2\
+          \},\
+          "conditions": [\
+            \{\
+              "id": "093710a8-0656-4b69-8b51-510843edb9f0",\
+              "leftValue": "=\{\{ $json.allowed \}\}",\
+              "rightValue": true,\
+              "operator": \{\
+                "type": "boolean",\
+                "operation": "equals"\
+              \}\
+            \}\
+          ],\
+          "combinator": "and"\
+        \},\
+        "options": \{\}\
+      \},\
+      "type": "n8n-nodes-base.if",\
+      "typeVersion": 2.2,\
+      "position": [\
+        -224,\
+        -688\
+      ],\
+      "id": "8ea3bd1d-9e19-40e0-8ec0-18e9afad7c8a",\
+      "name": "If"\
+    \},\
+    \{\
+      "parameters": \{\
+        "respondWith": "json",\
+        "responseBody": "\{\\n  \\"ok\\": false,\\n  \\"type\\": \\"LIMIT_EXCEEDED\\",\\n  \\"message\\": \\"This document is too large for the current version of AiFIX. Please upload \uc0\u8804  5MB (and \u8804  100 pages for PDFs), or split the document into smaller parts.\\"\\n\}\\n",\
+        "options": \{\}\
+      \},\
+      "type": "n8n-nodes-base.respondToWebhook",\
+      "typeVersion": 1.4,\
+      "position": [\
+        0,\
+        -560\
+      ],\
+      "id": "98b1eaa8-bdd3-47d1-a11c-59cd88d2a52c",\
+      "name": "Respond to Webhook - Docs Limit"\
+    \},\
+    \{\
+      "parameters": \{\
+        "jsCode": "const item = $input.item;\\n\\n// Robust binary picker (supports \\"file\\", \\"file0\\", etc.)\\nconst binObj = item.binary || $binary || \{\};\\nconst keys = Object.keys(binObj);\\nconst binKey = keys.length ? keys[0] : null;\\nconst bin = binKey ? binObj[binKey] : null;\\n\\nlet pages = null;\\n\\nif (bin && bin.data) \{\\n  try \{\\n    const buffer = Buffer.from(bin.data, \\"base64\\");\\n    const content = buffer.toString(\\"latin1\\");\\n\\n    // Heuristic (can fail on compressed PDFs)\\n    const matches = content.match(/\\\\/Type\\\\s*\\\\/Page\\\\b/g);\\n    pages = matches ? matches.length : null;\\n  \} catch (e) \{\\n    pages = null;\\n  \}\\n\}\\n\\nreturn [\{\\n  json: \{\\n    pages: pages,\\n    detectedBinaryKey: binKey\\n  \},\\n  binary: item.binary\\n\}];\\n"\
+      \},\
+      "type": "n8n-nodes-base.code",\
+      "typeVersion": 2,\
+      "position": [\
+        -624,\
+        -576\
+      ],\
+      "id": "8fd9bd2e-3de3-469b-b216-9dd47b4634e3",\
+      "name": "Document Page Count"\
+    \},\
+    \{\
+      "parameters": \{\
+        "mode": "combine",\
+        "combineBy": "combineByPosition",\
+        "options": \{\}\
+      \},\
+      "type": "n8n-nodes-base.merge",\
+      "typeVersion": 3.2,\
+      "position": [\
+        -416,\
+        -688\
+      ],\
+      "id": "a128574d-ab7c-48ad-9737-2e5aed25d838",\
+      "name": "Merge1"\
+    \}\
+  ],\
+  "connections": \{\
+    "Default Data Loader": \{\
+      "ai_document": [\
+        [\
+          \{\
+            "node": "Supabase Vector Store - KB",\
+            "type": "ai_document",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "Extract from File": \{\
+      "main": [\
+        [\
+          \{\
+            "node": "Supabase Vector Store - KB",\
+            "type": "main",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "Webhook - Knowledge Base": \{\
+      "main": [\
+        [\
+          \{\
+            "node": "Document Page Count",\
+            "type": "main",\
+            "index": 0\
+          \},\
+          \{\
+            "node": "Validate Document Limit",\
+            "type": "main",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "Character Text Splitter": \{\
+      "ai_textSplitter": [\
+        [\
+          \{\
+            "node": "Default Data Loader",\
+            "type": "ai_textSplitter",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "Supabase Vector Store - KB": \{\
+      "main": [\
+        [\
+          \{\
+            "node": "Metadata Extraction",\
+            "type": "main",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "Embeddings Ollama - KB": \{\
+      "ai_embedding": [\
+        [\
+          \{\
+            "node": "Supabase Vector Store - KB",\
+            "type": "ai_embedding",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "Create a row in KB Documents Table": \{\
+      "main": [\
+        [\
+          \{\
+            "node": "Respond to Webhook - KB",\
+            "type": "main",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "Metadata Extraction": \{\
+      "main": [\
+        [\
+          \{\
+            "node": "Create a row in KB Documents Table",\
+            "type": "main",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "Validate Document Limit": \{\
+      "main": [\
+        [\
+          \{\
+            "node": "Merge1",\
+            "type": "main",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "If": \{\
+      "main": [\
+        [\
+          \{\
+            "node": "Extract from File",\
+            "type": "main",\
+            "index": 0\
+          \}\
+        ],\
+        [\
+          \{\
+            "node": "Respond to Webhook - Docs Limit",\
+            "type": "main",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "Document Page Count": \{\
+      "main": [\
+        [\
+          \{\
+            "node": "Merge1",\
+            "type": "main",\
+            "index": 1\
+          \}\
+        ]\
+      ]\
+    \},\
+    "Merge1": \{\
+      "main": [\
+        [\
+          \{\
+            "node": "If",\
+            "type": "main",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \}\
+  \},\
+  "pinData": \{\
+    "Webhook - Knowledge Base": [\
+      \{\
+        "headers": \{\
+          "host": "localhost:5678",\
+          "connection": "keep-alive",\
+          "content-length": "1237212",\
+          "sec-ch-ua-platform": "\\"macOS\\"",\
+          "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",\
+          "sec-ch-ua": "\\"Chromium\\";v=\\"140\\", \\"Not=A?Brand\\";v=\\"24\\", \\"Google Chrome\\";v=\\"140\\"",\
+          "content-type": "multipart/form-data; boundary=----WebKitFormBoundary4kPelhfC1tniQyDB",\
+          "sec-ch-ua-mobile": "?0",\
+          "accept": "*/*",\
+          "origin": "https://e7b73448-60e0-436c-bb77-c561bb9ad523.lovableproject.com",\
+          "sec-fetch-site": "cross-site",\
+          "sec-fetch-mode": "cors",\
+          "sec-fetch-dest": "empty",\
+          "accept-encoding": "gzip, deflate, br, zstd",\
+          "accept-language": "en-US,en;q=0.9"\
+        \},\
+        "params": \{\},\
+        "query": \{\},\
+        "body": \{\
+          "session_id": "68a1762f-e460-4506-b6c7-5a5d5c541150",\
+          "file_size": "1236657",\
+          "mime_type": "application/pdf"\
+        \},\
+        "webhookUrl": "http://localhost:5678/webhook/106ba888-2561-4415-b6bf-94bdb4490ca4",\
+        "executionMode": "production"\
+      \}\
+    ]\
+  \},\
+  "meta": \{\
+    "templateCredsSetupCompleted": true,\
+    "instanceId": "32b991bc33ec68a97b428215184ef01ed63df912c4dc229fb536f0f6cff258b4"\
+  \}\
+\}}

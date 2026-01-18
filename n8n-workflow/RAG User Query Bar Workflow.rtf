@@ -1,0 +1,267 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2822
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 \{\
+  "nodes": [\
+    \{\
+      "parameters": \{\
+        "content": "### RAG AI Agent - Workflow",\
+        "height": 524,\
+        "width": 1020,\
+        "color": 3\
+      \},\
+      "type": "n8n-nodes-base.stickyNote",\
+      "position": [\
+        512,\
+        -1456\
+      ],\
+      "typeVersion": 1,\
+      "id": "917b85b3-d02e-4521-bd32-c22abd1249cb",\
+      "name": "Sticky Note1"\
+    \},\
+    \{\
+      "parameters": \{\
+        "model": "llama3.1:latest",\
+        "options": \{\}\
+      \},\
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",\
+      "typeVersion": 1,\
+      "position": [\
+        768,\
+        -1216\
+      ],\
+      "id": "5af08a4f-aafb-4ed3-ad7b-14f3f450ba5a",\
+      "name": "Ollama Chat Model",\
+      "credentials": \{\
+        "ollamaApi": \{\
+          "id": "SBJS5W8EkmiBcayu",\
+          "name": "Ollama account"\
+        \}\
+      \}\
+    \},\
+    \{\
+      "parameters": \{\
+        "promptType": "define",\
+        "text": "=Session Id: \{\{ $json.body.session_id \}\}\\nThe query: \{\{ $json.body.message \}\}",\
+        "options": \{\
+          "systemMessage": "You are a professional and expert Financial Planning Advisor.\\n\\nYour role is to help users understand, monitor, and improve their financial performance based on the provided data and context.\\n\\nResponse rules (STRICT):\\n* Keep responses concise and practical\\n* Target length: 120\'96180 words maximum\\n* Focus on insights and actions, not general theory\\n* Avoid generic financial education unless explicitly asked\\n* Personalize responses whenever user data or reference material is available\\n\\nFormatting rules:\\n* Use clear section headers\\n* Use bullet points for key points\\n* Avoid long paragraphs\\n* Do NOT include markdown symbols such as ** or excessive formatting\\n\\nIf reference material is provided:\\n* Base your response strictly on the reference content\\n* Do not introduce external knowledge\\n* If the answer is not found in the reference, state this clearly\\n\\nTone:\\n* Professional\\n* Clear\\n* Supportive\\n* Advisor-like (not academic, not blog-style)\\n\\nHard RAG constraint:\\n- If no reference material or retrieved context is provided, you MUST NOT answer.\\n- In such cases, respond exactly with:\\n  \\"I cannot answer this question based on the uploaded reference materials.\\"\\n"\
+        \}\
+      \},\
+      "type": "@n8n/n8n-nodes-langchain.agent",\
+      "typeVersion": 3,\
+      "position": [\
+        896,\
+        -1408\
+      ],\
+      "id": "b8437c8f-2c0b-4dcd-a46b-3f7ba438eb1e",\
+      "name": "RAG AI Agent"\
+    \},\
+    \{\
+      "parameters": \{\
+        "sessionIdType": "customKey",\
+        "sessionKey": "=\{\{ $json.body.session_id \}\}"\
+      \},\
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",\
+      "typeVersion": 1.3,\
+      "position": [\
+        928,\
+        -1216\
+      ],\
+      "id": "cb474961-75ae-4abf-a098-f757ece44b82",\
+      "name": "Postgres Chat Memory",\
+      "credentials": \{\
+        "postgres": \{\
+          "id": "lHdYbqutVoRl8M8l",\
+          "name": "Postgres account"\
+        \}\
+      \}\
+    \},\
+    \{\
+      "parameters": \{\
+        "httpMethod": "POST",\
+        "path": "201ab19c-1c94-4a4e-b1ce-c383bdc84dec",\
+        "responseMode": "responseNode",\
+        "options": \{\}\
+      \},\
+      "type": "n8n-nodes-base.webhook",\
+      "typeVersion": 2.1,\
+      "position": [\
+        624,\
+        -1408\
+      ],\
+      "id": "b5fadd01-5476-4472-af00-8e9d52f398b8",\
+      "name": "Webhook - User Query",\
+      "webhookId": "201ab19c-1c94-4a4e-b1ce-c383bdc84dec"\
+    \},\
+    \{\
+      "parameters": \{\
+        "mode": "retrieve-as-tool",\
+        "toolDescription": "Work with your data in Supabase Vector Store",\
+        "tableName": \{\
+          "__rl": true,\
+          "value": "documents",\
+          "mode": "list",\
+          "cachedResultName": "documents"\
+        \},\
+        "options": \{\
+          "queryName": "match_documents"\
+        \}\
+      \},\
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",\
+      "typeVersion": 1.3,\
+      "position": [\
+        1184,\
+        -1232\
+      ],\
+      "id": "b6bcb243-ba9e-46ab-be83-943a1c8cec33",\
+      "name": "Supabase Vector Store - RAG",\
+      "credentials": \{\
+        "supabaseApi": \{\
+          "id": "Jl3Tko0AFXvzHtZg",\
+          "name": "CAIE Project"\
+        \}\
+      \}\
+    \},\
+    \{\
+      "parameters": \{\
+        "respondWith": "json",\
+        "responseBody": "=\{\\n  \\"response\\": \{\{ JSON.stringify($json.output || $json.response || $json.text) \}\}\\n\}\\n",\
+        "options": \{\}\
+      \},\
+      "type": "n8n-nodes-base.respondToWebhook",\
+      "typeVersion": 1.4,\
+      "position": [\
+        1248,\
+        -1408\
+      ],\
+      "id": "9afb1f70-adbb-4483-9b94-8216135cfb7b",\
+      "name": "Respond to Webhook - RAG"\
+    \},\
+    \{\
+      "parameters": \{\
+        "model": "llama3.1:latest"\
+      \},\
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",\
+      "typeVersion": 1,\
+      "position": [\
+        1184,\
+        -1072\
+      ],\
+      "id": "664a0dd0-634b-443e-a616-d3e9865c725c",\
+      "name": "Embeddings Ollama - RAG",\
+      "credentials": \{\
+        "ollamaApi": \{\
+          "id": "SBJS5W8EkmiBcayu",\
+          "name": "Ollama account"\
+        \}\
+      \}\
+    \}\
+  ],\
+  "connections": \{\
+    "Ollama Chat Model": \{\
+      "ai_languageModel": [\
+        [\
+          \{\
+            "node": "RAG AI Agent",\
+            "type": "ai_languageModel",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "RAG AI Agent": \{\
+      "main": [\
+        [\
+          \{\
+            "node": "Respond to Webhook - RAG",\
+            "type": "main",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "Postgres Chat Memory": \{\
+      "ai_memory": [\
+        [\
+          \{\
+            "node": "RAG AI Agent",\
+            "type": "ai_memory",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "Webhook - User Query": \{\
+      "main": [\
+        [\
+          \{\
+            "node": "RAG AI Agent",\
+            "type": "main",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "Supabase Vector Store - RAG": \{\
+      "ai_tool": [\
+        [\
+          \{\
+            "node": "RAG AI Agent",\
+            "type": "ai_tool",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \},\
+    "Embeddings Ollama - RAG": \{\
+      "ai_embedding": [\
+        [\
+          \{\
+            "node": "Supabase Vector Store - RAG",\
+            "type": "ai_embedding",\
+            "index": 0\
+          \}\
+        ]\
+      ]\
+    \}\
+  \},\
+  "pinData": \{\
+    "Webhook - User Query": [\
+      \{\
+        "headers": \{\
+          "host": "localhost:5678",\
+          "connection": "keep-alive",\
+          "content-length": "151",\
+          "sec-ch-ua-platform": "\\"macOS\\"",\
+          "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",\
+          "sec-ch-ua": "\\"Chromium\\";v=\\"140\\", \\"Not=A?Brand\\";v=\\"24\\", \\"Google Chrome\\";v=\\"140\\"",\
+          "content-type": "application/json",\
+          "sec-ch-ua-mobile": "?0",\
+          "accept": "*/*",\
+          "origin": "https://e7b73448-60e0-436c-bb77-c561bb9ad523.lovableproject.com",\
+          "sec-fetch-site": "cross-site",\
+          "sec-fetch-mode": "cors",\
+          "sec-fetch-dest": "empty",\
+          "accept-encoding": "gzip, deflate, br, zstd",\
+          "accept-language": "en-US,en;q=0.9"\
+        \},\
+        "params": \{\},\
+        "query": \{\},\
+        "body": \{\
+          "session_id": "68a1762f-e460-4506-b6c7-5a5d5c541150",\
+          "message": "my expenses is 39.6% of my income. is that follow the guideline provided by the book?"\
+        \},\
+        "webhookUrl": "http://localhost:5678/webhook/201ab19c-1c94-4a4e-b1ce-c383bdc84dec",\
+        "executionMode": "production"\
+      \}\
+    ]\
+  \},\
+  "meta": \{\
+    "templateCredsSetupCompleted": true,\
+    "instanceId": "32b991bc33ec68a97b428215184ef01ed63df912c4dc229fb536f0f6cff258b4"\
+  \}\
+\}}
