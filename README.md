@@ -116,3 +116,11 @@ Troubleshooting:
 3. Ensure Ollama is running on port 11434 (or on the right port)
 4. Ensure Supabase tables match workflow inserts
 5. Ensure all the connections of the tools are successfully in n8n
+
+## Frontend (Not Included)
+
+The Lovable frontend used in the original AiFIX prototype is not included in this public repository.
+
+This repository focuses on the core AiFIX functions (RAG pipeline, workflows, database schema, and local LLM).  
+You can build your own UI (Lovable, React, Vue, etc.) as long as it calls the provided n8n webhook endpoints with the same payload structure.
+
